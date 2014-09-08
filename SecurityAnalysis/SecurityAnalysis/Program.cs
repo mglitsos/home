@@ -20,10 +20,28 @@ namespace SecurityAnalysis
             using (var dataStream = response.GetResponseStream())
             {
                 StreamReader reader = new StreamReader(dataStream);
-                CsvParser parser = new CsvParser(reader);
+
+                List<string[]> records = new List<string[]>();
+                using (var parser = new CsvParser(reader))
+                {
+                    while (true)
+                    {
+                        var row = parser.Read();
+                        if (row == null)
+                            break;
+                        records.Add(row);
+                    }
+                }
 
                 reader.Close();
 
+                foreach (string[] record in records)
+                {
+                    for (int i = 0; i < record.Length; i++)
+                        Console.Write(record[i] + Environment.NewLine);
+                    Console.Write(Environment.NewLine + Environment.NewLine);
+                }
+                Console.ReadLine();
             }
         }
     }
